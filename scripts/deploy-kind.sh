@@ -9,7 +9,7 @@ fi
 docker build -t unit-converter:local .
 "$KIND_BIN" load docker-image unit-converter:local --name devops-course
 kubectl --context kind-devops-course apply -f k8s/namespace.yaml
-kubectl --context kind-devops-course apply -f k8s/
+kubectl --context kind-devops-course apply -f k8s/configmap.yaml -f k8s/deployment.yaml -f k8s/service.yaml
 kubectl --context kind-devops-course -n unit-converter rollout restart deployment/unit-converter
 kubectl --context kind-devops-course -n unit-converter rollout status deployment/unit-converter --timeout=180s
 kubectl --context kind-devops-course -n unit-converter get pods,svc

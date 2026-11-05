@@ -10,3 +10,5 @@ node_modules/
 ansible/inventory.local.ini
 .env
 output/
+
+._*
