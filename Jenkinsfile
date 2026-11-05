@@ -2,7 +2,7 @@ pipeline {
     agent any
     tools { jdk 'jdk17'; maven 'maven3' }
     triggers { pollSCM('* * * * *') }
-    options { timestamps(); disableConcurrentBuilds(); buildDiscarder(logRotator(numToKeepStr: '15')) }
+    options { disableConcurrentBuilds(); buildDiscarder(logRotator(numToKeepStr: '15')) }
     stages {
         stage('Checkout') { steps { checkout scm } }
         stage('Test') { steps { sh 'mvn -B clean test' } }
