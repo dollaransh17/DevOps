@@ -1,0 +1,11 @@
+---
+galaxy_info:
+  role_name: converter
+  author: Anshul Vaibhav
+  description: Install and run the Java unit converter on Debian or Ubuntu
+  license: MIT
+  min_ansible_version: '2.17'
+  platforms:
+    - name: Ubuntu
+      versions: [jammy, noble]
+dependencies: []

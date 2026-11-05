@@ -1,0 +1,20 @@
+[Unit]
+Description=Unit converter API
+After=network.target
+
+[Service]
+Type=simple
+User={{ app_user }}
+Group={{ app_user }}
+WorkingDirectory={{ app_dir }}
+Environment=APP_PORT={{ app_port }}
+ExecStart=/usr/bin/java -jar {{ app_dir }}/app.jar
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

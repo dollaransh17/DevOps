@@ -1,0 +1,6 @@
+---
+- name: Configure the unit converter server
+  hosts: app_servers
+  become: true
+  roles:
+    - converter

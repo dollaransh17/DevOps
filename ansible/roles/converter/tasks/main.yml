@@ -1,0 +1,58 @@
+---
+- name: Check supported host
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['os_family'] == 'Debian'
+      - ansible_facts['service_mgr'] == 'systemd'
+    fail_msg: Use an Ubuntu or Debian host running systemd.
+- name: Install Java 17 runtime
+  ansible.builtin.apt:
+    name: openjdk-17-jre-headless
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+- name: Create service account
+  ansible.builtin.user:
+    name: "{{ app_user }}"
+    system: true
+    shell: /usr/sbin/nologin
+    create_home: false
+- name: Create application directory
+  ansible.builtin.file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0755'
+- name: Copy the Maven artifact
+  ansible.builtin.copy:
+    src: "{{ app_jar }}"
+    dest: "{{ app_dir }}/app.jar"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0644'
+  notify: Restart converter
+- name: Install systemd service
+  ansible.builtin.template:
+    src: converter.service.j2
+    dest: /etc/systemd/system/unit-converter.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart converter
+- name: Apply service changes before checking health
+  ansible.builtin.meta: flush_handlers
+- name: Enable and start the application
+  ansible.builtin.systemd_service:
+    name: unit-converter
+    enabled: true
+    state: started
+    daemon_reload: true
+- name: Confirm application responds
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ app_port }}/health"
+    return_content: true
+  register: health
+  until: health.status == 200 and health.json.status == 'UP'
+  retries: 10
+  delay: 2

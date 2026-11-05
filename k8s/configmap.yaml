@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: converter-settings
+  namespace: unit-converter
+data:
+  APP_PORT: "8080"
